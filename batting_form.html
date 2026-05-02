@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打撃成績入力</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0d1b2a;
+  --navy2: #1b2d42;
+  --navy3: #243650;
+  --gold: #e8a020;
+  --gold2: #f5c050;
+  --white: #eef2f7;
+  --gray: #8899aa;
+  --green: #22b555;
+  --red: #d93444;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  min-height: 100vh;
+  padding: 16px;
+}
+.container { max-width: 480px; margin: 0 auto; padding-bottom: 40px; }
+
+/* ヘッダー */
+.header {
+  text-align: center;
+  padding: 24px 0 20px;
+}
+.header-en {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+.header-ja {
+  font-size: 22px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold2), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+/* セクション */
+.section {
+  background: var(--navy2);
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--gold);
+  opacity: 0.8;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* フォームグループ */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.form-row.single { grid-template-columns: 1fr; }
+.form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label {
+  font-size: 11px;
+  color: var(--gray);
+  letter-spacing: 0.5px;
+}
+.form-input {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 11px 12px;
+  color: var(--white);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  -moz-appearance: textfield;
+}
+.form-input::-webkit-outer-spin-button,
+.form-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.form-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(232,160,32,0.15);
+}
+.form-input[type="date"] { color-scheme: dark; }
+
+/* 送信ボタン */
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--navy);
+  border: none;
+  border-radius: 14px;
+  padding: 17px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 20px rgba(232,160,32,0.3);
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,160,32,0.45); }
+.submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* 成功・エラー */
+.message {
+  display: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+.message.success {
+  background: rgba(34,181,85,0.15);
+  border: 1px solid rgba(34,181,85,0.35);
+  color: var(--green);
+}
+.message.error {
+  background: rgba(217,52,68,0.15);
+  border: 1px solid rgba(217,52,68,0.35);
+  color: var(--red);
+}
+
+/* 計算プレビュー */
+.calc-preview {
+  background: var(--navy3);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.calc-item { text-align: center; }
+.calc-label { font-size: 10px; color: var(--gray); margin-bottom: 3px; letter-spacing: 0.5px; }
+.calc-value { font-size: 18px; font-weight: 900; color: var(--gold2); }
+
+.note {
+  font-size: 11px;
+  color: var(--gray);
+  text-align: center;
+  margin-top: 8px;
+  opacity: 0.6;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-en">BSTONES SOFTBALL</div>
+    <div class="header-ja">⚾ 打撃成績入力</div>
+  </div>
+
+  <div class="message" id="message"></div>
+
+  <!-- 試合情報 -->
+  <div class="section">
+    <div class="section-title">試合情報</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">試合日</label>
+        <input type="date" class="form-input" id="gameDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">背番号</label>
+        <input type="number" class="form-input" id="number" placeholder="例：7" min="0" max="99">
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="form-group">
+        <label class="form-label">対戦相手</label>
+        <input type="text" class="form-input" id="opponent" placeholder="例：○○クラブ">
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本成績 -->
+  <div class="section">
+    <div class="section-title">基本成績</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">打席数</label>
+        <input type="number" class="form-input" id="pa" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">打数</label>
+        <input type="number" class="form-input" id="ab" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+    </div>
+    <div class="form-row triple">
+      <div class="form-group">
+        <label class="form-label">単打</label>
+        <input type="number" class="form-input" id="h" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">二塁打</label>
+        <input type="number" class="form-input" id="double" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">三塁打</label>
+        <input type="number" class="form-input" id="triple" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+    </div>
+    <div class="form-row triple">
+      <div class="form-group">
+        <label class="form-label">本塁打</label>
+        <input type="number" class="form-input" id="hr" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">四球</label>
+        <input type="number" class="form-input" id="bb" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">死球</label>
+        <input type="number" class="form-input" id="hbp" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+    </div>
+    <div class="form-row triple">
+      <div class="form-group">
+        <label class="form-label">三振</label>
+        <input type="number" class="form-input" id="so" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">打点</label>
+        <input type="number" class="form-input" id="rbi" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">得点</label>
+        <input type="number" class="form-input" id="run" placeholder="0" min="0">
+      </div>
+    </div>
+
+    <!-- リアルタイム計算プレビュー -->
+    <div class="calc-preview">
+      <div class="calc-item">
+        <div class="calc-label">打率</div>
+        <div class="calc-value" id="avg">---</div>
+      </div>
+      <div class="calc-item">
+        <div class="calc-label">出塁率</div>
+        <div class="calc-value" id="obp">---</div>
+      </div>
+      <div class="calc-item">
+        <div class="calc-label">長打率</div>
+        <div class="calc-value" id="slg">---</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 得点圏 -->
+  <div class="section">
+    <div class="section-title">得点圏</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">得点圏打数</label>
+        <input type="number" class="form-input" id="risp_ab" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">得点圏安打</label>
+        <input type="number" class="form-input" id="risp_h" placeholder="0" min="0" oninput="calcStats()">
+      </div>
+    </div>
+    <div class="calc-preview" style="grid-template-columns:1fr;">
+      <div class="calc-item">
+        <div class="calc-label">得点圏打率</div>
+        <div class="calc-value" id="risp_avg">---</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- その他 -->
+  <div class="section">
+    <div class="section-title">その他</div>
+    <div class="form-row triple">
+      <div class="form-group">
+        <label class="form-label">犠打</label>
+        <input type="number" class="form-input" id="sac" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">犠飛</label>
+        <input type="number" class="form-input" id="sf" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">併殺</label>
+        <input type="number" class="form-input" id="gdp" placeholder="0" min="0">
+      </div>
+    </div>
+    <div class="form-row triple">
+      <div class="form-group">
+        <label class="form-label">残塁</label>
+        <input type="number" class="form-input" id="lob" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">盗塁</label>
+        <input type="number" class="form-input" id="sb" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">盗塁死</label>
+        <input type="number" class="form-input" id="cs" placeholder="0" min="0">
+      </div>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()">✅ 成績を送信する</button>
+  <p class="note">送信するとGoogleスプレッドシートに記録されます</p>
+
+  <!-- 年俸診断リンク -->
+  <div id="salary-link" style="display:none !important;margin-top:12px;">
+    <a href="https://menzenpinfu.github.io/salary-diagnosis/" style="
+      display:block;
+      background:linear-gradient(135deg,#d4a843,#f0cc70);
+      color:#0d1b2a;
+      border-radius:14px;
+      padding:17px;
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      font-size:17px;
+      font-weight:900;
+      text-align:center;
+      text-decoration:none;
+      letter-spacing:1px;
+      box-shadow:0 6px 24px rgba(212,168,67,0.3);
+      transition:transform 0.15s;
+    ">💰 年俸を診断する →</a>
+    <p style="font-size:11px;color:#6878a0;text-align:center;margin-top:8px;">成績を元にプロ野球換算年俸を診断</p>
+  </div>
+</div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzDcpuXxhq7VAROtJR_ZaFpSZ840PnYJaOkIwp6zLTskkubmbT2ivx0RulxS3xelpo__Q/exec';
+
+// 今日の日付をデフォルト設定
+const today = new Date();
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, '0');
+const dd = String(today.getDate()).padStart(2, '0');
+document.getElementById('gameDate').value = `${yyyy}-${mm}-${dd}`;
+
+function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function calcStats() {
+  const ab = val('ab');
+  const h = val('h') + val('double') + val('triple') + val('hr');
+  const bb = val('bb');
+  const hbp = val('hbp');
+  const pa = val('pa');
+  const double_ = val('double');
+  const triple = val('triple');
+  const hr = val('hr');
+  const risp_ab = val('risp_ab');
+  const risp_h = val('risp_h');
+
+  // 打率
+  const avg = ab > 0 ? (h / ab) : null;
+  document.getElementById('avg').textContent = avg !== null ? avg.toFixed(3).replace(/^0/, '') : '---';
+
+  // 出塁率
+  const obp_denom = ab + bb + hbp;
+  const obp = obp_denom > 0 ? ((h + bb + hbp) / obp_denom) : null;
+  document.getElementById('obp').textContent = obp !== null ? obp.toFixed(3).replace(/^0/, '') : '---';
+
+  // 長打率
+  const tb = (h - double_ - triple - hr) + double_ * 2 + triple * 3 + hr * 4;
+  const slg = ab > 0 ? (tb / ab) : null;
+  document.getElementById('slg').textContent = slg !== null ? slg.toFixed(3).replace(/^0/, '') : '---';
+
+  // 得点圏打率
+  const risp = risp_ab > 0 ? (risp_h / risp_ab) : null;
+  document.getElementById('risp_avg').textContent = risp !== null ? risp.toFixed(3).replace(/^0/, '') : '---';
+}
+
+function showMessage(type, text) {
+  const el = document.getElementById('message');
+  el.className = 'message ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+async function submitForm() {
+  // バリデーション
+  if (!document.getElementById('gameDate').value) {
+    showMessage('error', '試合日を入力してください'); return;
+  }
+  if (!document.getElementById('number').value) {
+    showMessage('error', '背番号を入力してください'); return;
+  }
+  if (!document.getElementById('opponent').value.trim()) {
+    showMessage('error', '対戦相手を入力してください'); return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '送信中…';
+
+  const data = {
+    gameDate: document.getElementById('gameDate').value,
+    opponent: document.getElementById('opponent').value.trim(),
+    number: val('number'),
+    pa: val('pa'), ab: val('ab'),
+    h: val('h'), double: val('double'), triple: val('triple'), hr: val('hr'),
+    bb: val('bb'), hbp: val('hbp'), so: val('so'),
+    risp_ab: val('risp_ab'), risp_h: val('risp_h'),
+    rbi: val('rbi'), run: val('run'),
+    sac: val('sac'), sf: val('sf'), gdp: val('gdp'),
+    lob: val('lob'), sb: val('sb'), cs: val('cs')
+  };
+
+  try {
+    // Google Apps ScriptはJSONPで送信
+    await new Promise((resolve, reject) => {
+      const params = new URLSearchParams();
+      Object.keys(data).forEach(k => params.append(k, data[k]));
+      const url = GAS_URL + '?' + params.toString();
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = resolve; // CORSエラーでも成功扱い
+      document.head.appendChild(script);
+      setTimeout(resolve, 3000); // 3秒でタイムアウト
+    });
+    showMessage('success', '✅ 送信完了！スプレッドシートに記録されました');
+    document.getElementById('salary-link').style.cssText = 'display:block;margin-top:12px;';
+    // フォームリセット（試合日・背番号・相手は保持）
+    const keepDate = document.getElementById('gameDate').value;
+    const keepNum = document.getElementById('number').value;
+    const keepOpp = document.getElementById('opponent').value;
+    ['pa','ab','h','double','triple','hr','bb','hbp','so',
+     'risp_ab','risp_h','rbi','run','sac','sf','gdp','lob','sb','cs'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('gameDate').value = keepDate;
+    document.getElementById('number').value = keepNum;
+    document.getElementById('opponent').value = keepOpp;
+    document.getElementById('salary-link').style.cssText = 'display:none;margin-top:12px;';
+    calcStats();
+  } catch(e) {
+    showMessage('error', '送信に失敗しました。もう一度お試しください。');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✅ 成績を送信する';
+}
+</script>
+</body>
+</html>
